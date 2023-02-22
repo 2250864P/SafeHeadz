@@ -24,7 +24,7 @@
             <div class="ml-auto" id="navbarLog">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-primary mr-2" href="#">Sign Up</a>
+                        <router-link to="/account-type" class="nav-link btn btn-outline-primary mr-2">Sign Up</router-link>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-primary" href="#">Login</a>
@@ -38,7 +38,7 @@
         <div class="jumbotron jumbotron-fluid text-center">
             <div class="container-fluid">
                 <h1 class="display-4">Empowering athletes, team staff and governing bodies to tackle concussions</h1>
-                <a href="#" class="btn btn-primary btn-lg">Sign Up Now</a>
+                <router-link to="/account-type" class="btn btn-primary btn-lg">Sign Up Now</router-link>
             </div>
         </div>
     </div>
