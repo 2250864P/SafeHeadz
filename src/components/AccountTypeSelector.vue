@@ -1,3 +1,4 @@
+<!--User selects account type before signing up for account-->
 <template>
     <div class="d-flex align-items-center justify-content-center" style="height: 100vh;">
         <div class="container">
@@ -7,6 +8,7 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
+                        <!--each account type has different permisions-->
                         <label for="accountType">Account Type</label>
                         <select id="accountType" class="form-control" v-model="selectedAccountType">
                             <option value="" disabled>Select...</option>
