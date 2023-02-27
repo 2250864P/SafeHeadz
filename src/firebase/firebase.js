@@ -1,19 +1,25 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
 
+//configuration details as an object
 const firebaseConfig = {
-    apiKey: "AIzaSyDsQbhaXrBhhcN164y9VlSS5ozlgWAeIzk",
-    authDomain: "safeheadz-2b098.firebaseapp.com",
-    projectId: "safeheadz-2b098",
-    storageBucket: "safeheadz-2b098.appspot.com",
-    messagingSenderId: "452567858090",
-    appId: "1:452567858090:web:80a12cde6bd4edac5b49d3",
-    measurementId: "G-BRLCQY40BX"
-  };
+  apiKey: "AIzaSyCKHrwNd7Bu95OzZ_521IybYmceOmZ3TFI",
+  authDomain: "safeheads-20550.firebaseapp.com",
+  projectId: "safeheads-20550",
+  storageBucket: "safeheads-20550.appspot.com",
+  messagingSenderId: "973611030918",
+  appId: "1:973611030918:web:83cfc00884af4b25aa3407",
+  measurementId: "G-1W3GFL9FT1",
+};
 
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const analytics = getAnalytics(app);
 
-export { db };
+// Initialize Firestore service
+const db = getFirestore(app);
+
+// Initialize Firebase authorization service
+const auth = getAuth(app);
+
+export { db, auth };

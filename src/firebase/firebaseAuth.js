@@ -1,15 +1,23 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/firebase";
+import { auth, db } from "@/firebase/firebase";
 
-const createUser = async (forename, surname, email, password) => {
+export const createUser = async (forename, surname, email, password) => {
   try {
     const displayName = `${forename} ${surname}`;
-    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     await setDoc(doc(db, "users", user.uid), {
       displayName,
       email,
-      // add any additional user data you want to store here
+      forename,
+      surname,
+      createdAt: new Date(),
+      //User signs up and data is stored in "users" collection
+      //Document ID = "user.uid"
     });
     return user;
   } catch (error) {

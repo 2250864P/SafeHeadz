@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/components/HomePage.vue";
-import SignUp from "@/components/SignUp.vue";
-import AccountTypeSelector from "@/components/AccountTypeSelector.vue";
+import SignUp from "@/components/signup/SignUp.vue";
+import AccountTypeSelector from "@/components/signup/AccountTypeSelector.vue";
 
 const routes = [
   {
