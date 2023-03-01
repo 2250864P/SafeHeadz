@@ -35,6 +35,7 @@
 <script>
 import { ref } from "vue";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { handleAuthStateChanged } from "@/firebase/authState";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/firebase";
 
@@ -58,6 +59,7 @@ export default {
                 const { user } = await createUserWithEmailAndPassword(auth, email.value, password.value);
 
                 await sendEmailVerification(user);
+                await handleAuthStateChanged(user);
                 await setDoc(doc(db, "users", user.uid), {
                     displayName,
                     email: user.email,
@@ -66,7 +68,7 @@ export default {
                 console.log("Verification email sent to:", user.email);
                 // handle successful sign-up here, show success message and redirect to home page
                 alert("Verification email sent! Please verify your email address to complete registration.");
-                location.href = "@/components/HomePage.vue"; 
+                location.href = "/"; 
             } catch (error) {
                 console.error(error);
                 // handle failed sign-up here, show error message
