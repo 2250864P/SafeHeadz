@@ -1,7 +1,7 @@
 <!-- Universal background for the application -->
 <template>
   <div>
-    <img src="../assets/Website_Logo.png" alt="Background" class="background-image">
+    <!--img src="../assets/Website_Logo.png" alt="Background" class="background-image"-->
     <div class="container">
       <slot></slot>
     </div>
@@ -15,13 +15,13 @@ export default {
 </script>
 
 <style scoped>
-.background-image {
+/*.background-image {
   opacity: 0.3;
   position: absolute;
   z-index: -1;
   width: 100%;
   height: 100%;
-}
+}*/
 
 .container {
   padding-top: 1px;

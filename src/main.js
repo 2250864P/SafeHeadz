@@ -1,11 +1,12 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router/router";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap/dist/js/bootstrap.js";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
 import { auth, db } from "@/firebase/firebase";
 import { createUser } from "@/firebase/firebaseAuth";
 import { handleAuthStateChanged } from "@/firebase/authState"
+
 
 const app = createApp(App);
 

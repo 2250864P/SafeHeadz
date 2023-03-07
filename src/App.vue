@@ -2,7 +2,6 @@
   <div id="app">
     <PageBackground>
       <router-view></router-view>
-      <Footer />
     </PageBackground>
   </div>
 </template>
@@ -16,14 +15,14 @@ body {
 
 <script>
 import PageBackground from '@/components/PageBackground.vue';
-import Footer from '@/components/Footer.vue';
+//import Footer from '@/components/Footer.vue';
 // imported background and footer
 
 export default {
   name: 'App',
   components: {
     PageBackground,
-    Footer,
+    //Footer,
   },
 
   created() {

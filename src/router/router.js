@@ -3,6 +3,8 @@ import HomePage from "@/components/HomePage.vue";
 import SignUp from "@/components/signup/SignUp.vue";
 import AccountTypeSelector from "@/components/signup/AccountTypeSelector.vue";
 import userLogin from "@/components/login/userLogin.vue";
+import userProfile from "@/components/profile/userProfile.vue"
+import injuryDashboard from "@/components/profile/injuryDashboard"
 import { auth } from "@/firebase/firebase.js";
 
 
@@ -31,15 +33,24 @@ const routes = [
     path: "/login",
     name: "userLogin",
     component: userLogin,
-  }
-  /*{
+  },
+  {
     path: "/profile",
-    name: "ProfilePage",
-    component: ,
+    name: "userProfile",
+    component: userProfile,
     meta: {
       requiresAuth: true,
     }
-  }, */
+  },
+  {
+    path: "/dashboard",
+    name: "injuryDashboard",
+    component: injuryDashboard,
+    meta: {
+      requiresAuth: true,
+    }
+  },
+
 ];
 
 const router = createRouter({

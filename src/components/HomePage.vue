@@ -1,7 +1,11 @@
 <template>
     <nav class="navbar navbar-fluid navbar-expand-lg navbar-light bg-transparent w-100">
-        <a class="navbar-brand" href="#">SafeHeads</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        <a class="navbar-brand" href="#">
+            <img :src="require('@/assets/Website_Logo.png')" width="80" height="80" class="d-inline-block align-top me-2"
+                alt="">
+            SafeHeads
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -38,7 +42,7 @@
             </div>
 
             <!-- Sign Up and Login buttons displayed when user is not authenticated -->
-            <div class="ml-auto" id="navbarLog" v-else>
+            <div v-else>
                 <ul class="nav">
                     <li class="nav-item">
                         <router-link to="/account-type" class="nav-link btn btn-outline-primary mr-2">
@@ -68,8 +72,8 @@
                 <!-- Conditionally render profile link and message when user is authenticated -->
                 <div v-if="isAuthenticated">
                     <p>Hello {{ displayName }},</p>
-                    <router-link to="/profile" class="btn btn-primary btn-lg">
-                        Go to Profile
+                    <router-link to="/dashboard" class="btn btn-primary btn-lg">
+                        Go to Dashboard
                     </router-link>
                 </div>
             </div>
