@@ -33,18 +33,30 @@
 </template>
   
 <script>
-import { ref } from "vue";
+import { ref, toRef } from "vue";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { handleAuthStateChanged } from "@/firebase/authState";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/firebase/firebase";
 
 export default {
-    setup() {
+    props: {
+        account: {
+            type: String,
+            required: true,
+        },
+    },
+    computed: {
+        accountType() {
+            return this.$route.query.accountType
+        }
+    },
+    setup(props, context) {
         const email = ref("");
-        const password = ref("");
         const forename = ref("");
         const surname = ref("");
+        const accountType = toRef(this, "accountType");
+        const password = ref("");
         const confirmPassword = ref("");
 
         const handleSignUp = async () => {
@@ -52,14 +64,32 @@ export default {
                 console.log("Passwords do not match");
                 return;
             }
+            const rolesRef = collection(db, 'roles')
+            const uid = user.uid
 
+            switch (accountType.value) {
+                case 'admin':
+                    await rolesRef.doc(uid).set({ admin: true })
+                    break
+                case 'athlete':
+                    await rolesRef.doc(uid).set({ athlete: true })
+                    break
+                case 'coach':
+                    await rolesRef.doc(uid).set({ coach: true })
+                    break
+                case 'medical':
+                    await rolesRef.doc(uid).set({ medical: true })
+                    break
+                default:
+                    break
+            }
             const displayName = `${forename.value} ${surname.value}`;
 
             try {
                 const { user } = await createUserWithEmailAndPassword(auth, email.value, password.value);
 
                 await sendEmailVerification(user);
-                await handleAuthStateChanged(user);
+                handleAuthStateChanged(user);
                 await setDoc(doc(db, "users", user.uid), {
                     displayName,
                     email: user.email,
@@ -68,7 +98,7 @@ export default {
                 console.log("Verification email sent to:", user.email);
                 // handle successful sign-up here, show success message and redirect to home page
                 alert("Verification email sent! Please verify your email address to complete registration.");
-                location.href = "/"; 
+                location.href = "/";
             } catch (error) {
                 console.error(error);
                 // handle failed sign-up here, show error message
@@ -82,6 +112,7 @@ export default {
             forename,
             surname,
             confirmPassword,
+            accountType,
             handleSignUp,
         };
     },

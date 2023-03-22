@@ -66,8 +66,6 @@ export default {
             dob: "",
             contact: "",
             address: "",
-            clubs: "",
-            position: "",
             isEditing: false,
         };
     },
@@ -82,16 +80,12 @@ export default {
                     dob,
                     contact,
                     address,
-                    clubs,
-                    position,
                 } = docSnap.data();
                 this.displayName = displayName;
                 this.email = email;
                 this.dob = dob;
                 this.contact = contact;
                 this.address = address;
-                this.clubs = clubs;
-                this.position = position;
             }
         } catch (error) {
             console.error(error);

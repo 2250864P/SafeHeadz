@@ -12,11 +12,9 @@
                         <label for="accountType">Account Type</label>
                         <select id="accountType" class="form-control" v-model="selectedAccountType">
                             <option value="" disabled>Select...</option>
-                            <option value="player">Player</option>
+                            <option value="athlete">Athlete</option>
                             <option value="team-staff">Team Staff</option>
                             <option value="medical-staff">Medical Staff</option>
-                            <option value="consultant">Consultant</option>
-                            <option value="organisation-staff">Organisation Staff</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" :disabled="selectedAccountType === ''" @click="proceedToSignUpPage">
