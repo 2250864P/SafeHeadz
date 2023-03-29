@@ -1,5 +1,5 @@
 import { db } from "@/firebase/firebase";
-import { collection, doc, getDocs, addDoc } from "firebase/firestore";
+import { collection, doc, getDocs, addDoc, query, where } from "firebase/firestore";
 
 export const getIncidents = async () => {
   const headinjury = [];
@@ -39,3 +39,13 @@ export const getIncidentById = async (injury_id) => {
     return null;
   }
 };
+
+export async function getHeadInjuriesByUser(userId) {
+  const q = query(collection(db, "headinjury"), where("user_id", "==", userId));
+  const querySnapshot = await getDocs(q);
+  const headInjuries = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  return headInjuries;
+}

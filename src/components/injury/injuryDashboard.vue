@@ -2,7 +2,7 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Dashboard</a>
+                <a class="navbar-brand" href="#">Injury Dashboard</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -11,7 +11,7 @@
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <router-link to="/add" class="nav-link btn btn-primary">
-                                Add Head Injury
+                                Add Concussion Incident
                             </router-link>
                         </li>
                         <li class="nav-item">
@@ -32,26 +32,22 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Time</th>
-                        <th>Symptoms</th>
-                        <th>HIA Result</th>
-                        <th>Follow-up Required</th>
-                        <th>Follow-up Date</th>
-                        <th>Details</th>
+                        <th>Injury Details</th>
+                        <th>Recovery Progress</th>
+                        <th>Return to Play</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="incident in incidents" :key="incident.id">
-                        <td>{{ formatDate(incident.date) }}</td>
-                        <td>{{ formatTime(incident.time) }}</td>
-                        <td>{{ incident.symptoms }}</td>
-                        <td>{{ incident.hia_result }}</td>
-                        <td>{{ incident.follow_up ? 'Yes' : 'No' }}</td>
-                        <td>{{ incident.follow_up_date ? formatDate(incident.follow_up_date) : '' }}</td>
-                        <td>{{ incident.details }}</td>
+                        <td>{{ formatDate(incident.injury_date) }}</td>
+                        <td>{{ incident.injury_details }}</td>
+                        <td>{{ incident.recovery_progress }}</td>
+                        <td>{{ incident.rtp ? 'Yes' : 'No' }}</td>
+
                     </tr>
                 </tbody>
             </table>
+
         </div>
     </div>
 </template>
@@ -59,7 +55,7 @@
 <script>
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/firebase";
-import { getIncidents } from "@/firebase/firestoreIncidents";
+
 
 export default {
     data() {
@@ -79,19 +75,15 @@ export default {
                 const userData = userDoc.data();
                 this.incidents = userData.incidents || [];
 
-                // Get all incidents from the "incidents" collection
-                const allIncidents = await getIncidents();
+                // Get all head injuries from the "headinjury" collection for the current user
+                const userHeadInjuries = await getHeadInjuriesByUser(user.uid);
 
-                // Filter the incidents to only show those belonging to the current user
-                const userIncidents = allIncidents.filter(
-                    (incident) => incident.user_id === user.uid
-                );
-
-                // Add the user's incidents to the incidents array
-                this.incidents.push(...userIncidents);
+                // Add the user's head injuries to the incidents array
+                this.incidents.push(...userHeadInjuries);
             }
         }
     },
+
     methods: {
         formatDate(date) {
             // Format date as 'dd-mm-yyyy'
@@ -111,3 +103,4 @@ export default {
     },
 };
 </script>
+  

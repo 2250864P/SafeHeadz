@@ -33,11 +33,9 @@
 </template>
   
 <script>
-import { ref, toRef } from "vue";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { handleAuthStateChanged } from "@/firebase/authState";
-import { doc, setDoc, collection } from "firebase/firestore";
-import { auth, db } from "@/firebase/firebase";
+import { ref } from "vue";
+import { createUser } from "@/firebase/firestoreCollections.js";
+import { sendEmailVerification } from "firebase/auth";
 
 export default {
     props: {
@@ -48,14 +46,14 @@ export default {
     },
     computed: {
         accountType() {
-            return this.$route.query.accountType
+            return this.$route.query.accountType || 'default';
         }
     },
-    setup(props, context) {
+    setup(props) {
         const email = ref("");
         const forename = ref("");
         const surname = ref("");
-        const accountType = toRef(this, "accountType");
+        const accountType = ref(props.account);
         const password = ref("");
         const confirmPassword = ref("");
 
@@ -64,43 +62,23 @@ export default {
                 console.log("Passwords do not match");
                 return;
             }
-            const rolesRef = collection(db, 'roles')
-            const uid = user.uid
+            const user = await createUser(forename.value, surname.value, email.value, password.value, accountType.value);
 
-            switch (accountType.value) {
-                case 'admin':
-                    await rolesRef.doc(uid).set({ admin: true })
-                    break
-                case 'athlete':
-                    await rolesRef.doc(uid).set({ athlete: true })
-                    break
-                case 'coach':
-                    await rolesRef.doc(uid).set({ coach: true })
-                    break
-                case 'medical':
-                    await rolesRef.doc(uid).set({ medical: true })
-                    break
-                default:
-                    break
-            }
-            const displayName = `${forename.value} ${surname.value}`;
-
-            try {
-                const { user } = await createUserWithEmailAndPassword(auth, email.value, password.value);
-
-                await sendEmailVerification(user);
-                handleAuthStateChanged(user);
-                await setDoc(doc(db, "users", user.uid), {
-                    displayName,
-                    email: user.email,
-                });
-
-                console.log("Verification email sent to:", user.email);
-                // handle successful sign-up here, show success message and redirect to home page
-                alert("Verification email sent! Please verify your email address to complete registration.");
-                location.href = "/";
-            } catch (error) {
-                console.error(error);
+            if (user !== null) {
+                try {
+                    await sendEmailVerification(user);
+                    console.log("Verification email sent to:", user.email);
+                    // handle successful sign-up here, show success message and redirect to home page
+                    alert(
+                        "Verification email sent! Please verify your email address to complete registration."
+                    );
+                    location.href = "/";
+                } catch (error) {
+                    console.error(error);
+                    // handle failed email verification here, show error message
+                    alert("Email verification failed. Please try again later.");
+                }
+            } else {
                 // handle failed sign-up here, show error message
                 alert("Sign-up failed. Please try again later.");
             }
@@ -118,3 +96,4 @@ export default {
     },
 };
 </script>
+

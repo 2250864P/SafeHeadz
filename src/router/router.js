@@ -1,27 +1,36 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomePage from "@/components/HomePage.vue";
+import HomePage from "@/components/main/HomePage.vue";
+import AboutPage from "@/components/main/AboutPage.vue";
+import EducationalResources from "@/components/main/EducationalResources.vue";
 import SignUp from "@/components/signup/SignUp.vue";
 import AccountTypeSelector from "@/components/signup/AccountTypeSelector.vue";
 import userLogin from "@/components/login/userLogin.vue";
-import athleteProfile from "@/components/profile/athleteProfile.vue";
-import trainerProfile from "@/components/profile/athleteProfile.vue";
-import medicalProfile from "@/components/profile/athleteProfile.vue";
-import injuryDashboard from "@/components/injury/injuryDashboard";
+import userProfile from "@/components/profile/userProfile.vue"
+import injuryDashboard from "@/components/injury/injuryDashboard"
 import incidentEditor from "@/components/injury/incidentEditor";
 import { auth } from "@/firebase/firebase.js";
 
 const routes = [
   {
-    path: "/home",
+    path: "/",
     name: "HomePage",
     component: HomePage,
+  },
+  {
+    path: "/about",
+    name: "AboutPage",
+    component: AboutPage,
+  },
+  {
+    path: "/resources",
+    name: "EducationalResources",
+    component: EducationalResources,
   },
   {
     path: "/account-type",
     name: "AccountTypeSelector",
     component: AccountTypeSelector,
   },
-
   {
     path: "/signup",
     name: "SignUp",
@@ -34,22 +43,12 @@ const routes = [
     component: userLogin,
   },
   {
-    path: "/athlete-profile",
-    name: "athleteProfile",
-    component: athleteProfile,
-    meta: { requiresAthlete: true },
-  },
-  {
-    path: "/medical-profile",
-    name: "medicalProfile",
-    component: medicalProfile,
-    meta: { requiresMedical: true },
-  },
-  {
-    path: "/trainer-profile",
-    name: "trainerProfile",
-    component: trainerProfile,
-    meta: { requiresTrainer: true },
+    path: "/profile",
+    name: "userProfile",
+    component: userProfile,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/dashboard",
@@ -65,7 +64,6 @@ const routes = [
     component: incidentEditor,
     meta: {
       requiresAuth: true,
-      requiresMedical: true,
     },
   },
 ];
@@ -78,35 +76,11 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const currentUser = auth.currentUser;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const requiresAthlete = to.matched.some(
-    (record) => record.meta.requiresAthlete
-  );
-  const requiresMedical = to.matched.some(
-    (record) => record.meta.requiresMedical
-  );
-  const requiresTrainer = to.matched.some(
-    (record) => record.meta.requiresTrainer
-  );
 
   if (requiresAuth && !currentUser) {
-    next("/login");
-  } else if (
-    requiresAthlete &&
-    (!currentUser || currentUser.accountType !== "athlete")
-  ) {
-    next({ name: "HomePage" });
-  } else if (
-    requiresMedical &&
-    (!currentUser || currentUser.accountType !== "medical")
-  ) {
-    next({ name: "HomePage" });
-  } else if (
-    requiresTrainer &&
-    (!currentUser || currentUser.accountType !== "trainer")
-  ) {
-    next({ name: "HomePage" });
+    next("/login"); // Redirect to login page if user is not authenticated and accessing a route that requires authentication
   } else {
-    next();
+    next(); // Proceed to the requested route
   }
 });
 

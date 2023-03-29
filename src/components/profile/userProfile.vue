@@ -22,7 +22,7 @@
         </nav>
         <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" v-model="displayName" :disabled="!isEditing">
+            <input type="text" class="form-control" id="name" v-model="name" :disabled="!isEditing">
         </div>
         <div class="form-group">
             <label for="email">Email:</label>
@@ -61,21 +61,29 @@ import { auth, db } from "@/firebase/firebase";
 export default {
     data() {
         return {
-            displayName: "",
-            email: "",
-            dob: "",
-            contact: "",
-            address: "",
+            contact_information: {
+                address: "",
+                city: "",
+                phone_number: "",
+                postcode: "",
+                region: "",
+            },
+            email: email,
+            name: {
+                forename: forename,
+                surname: surname,
+            },
+            role: role,
             isEditing: false,
         };
     },
     async created() {
         try {
-            const docRef = doc(db, "users", auth.currentUser.uid);
+            const docRef = doc(db, "user", auth.currentUser.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const {
-                    displayName,
+                    name,
                     email,
                     dob,
                     contact,
@@ -97,7 +105,7 @@ export default {
         },
         async saveProfile() {
             try {
-                const docRef = doc(db, "users", auth.currentUser.uid);
+                const docRef = doc(db, "user", auth.currentUser.uid);
                 await updateDoc(docRef, {
                     displayName: this.displayName
                 });

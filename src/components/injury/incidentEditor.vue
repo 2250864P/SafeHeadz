@@ -1,7 +1,16 @@
 <template>
     <div class="container">
-        <h1>Add Head Injury Incident</h1>
+        <h1>Add Concussion Incident</h1>
         <form @submit.prevent="addIncident">
+            <div class="form-group">
+                <label for="athlete">Athlete:</label>
+                <input type="text" class="form-control" id="athlete" v-model="searchQuery" />
+                <ul>
+                    <li v-for="athlete in filteredAthletes" :key="athlete.id" @click="selectAthlete(athlete)">
+                        {{ athlete.name }} - {{ athlete.email }} - {{ athlete.role }}
+                    </li>
+                </ul>
+            </div>
             <div class="form-group">
                 <label for="date">Date:</label>
                 <input type="date" class="form-control" id="date" v-model="newIncident.date" required />
@@ -45,12 +54,12 @@
 <script>
 import { addIncident } from '@/firebase/firestoreIncidents';
 import { db, auth } from '@/firebase/firebase';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 export default {
     setup() {
         // Define a reactive object to hold the form data
-        const formData = ref({
+        const newIncident = ref({
             date: '',
             time: '',
             symptoms: '',
@@ -62,28 +71,64 @@ export default {
         // Define a reactive variable to track whether follow-up is required
         const followUpRequired = ref(false);
 
+        // Define a reactive variable to hold the selected athlete
+        const selectedAthlete = ref(null);
+
+        // Get the list of athletes from Firestore
+        const athletes = ref([]);
+        const getAthletes = async () => {
+            const querySnapshot = await db.collection('athletes').get();
+            athletes.value = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        };
+        getAthletes();
+
+        // Define a computed property to filter the athletes based on the search query
+        const searchQuery = ref('');
+        const filteredAthletes = computed(() => {
+            return athletes.value.filter((athlete) => {
+                // Check if the athlete's name, email, or role contains the search query
+                return (
+                    athlete.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                    athlete.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                    athlete.role.toLowerCase().includes(searchQuery.value.toLowerCase())
+                );
+            });
+        });
+
+        // Define a function to select an athlete from the search results
+        const selectAthlete = (athlete) => {
+            // Set the selected athlete
+            selectedAthlete.value = athlete;
+
+            // Clear the search query
+            searchQuery.value = '';
+        };
+
         // Define a function to validate the form data
         const validateForm = () => {
             // Check if date and time are selected
-            if (!formData.date || !formData.time) {
+            if (!newIncident.value.date || !newIncident.value.time) {
                 alert('Please select a date and time.');
                 return false;
             }
 
             // Check if symptoms are selected
-            if (!formData.symptoms) {
+            if (!newIncident.value.symptoms) {
                 alert('Please select symptoms.');
                 return false;
             }
 
             // Check if HIA result is selected
-            if (!formData.hia_result) {
+            if (!newIncident.value.hia_result) {
                 alert('Please select HIA result.');
                 return false;
             }
 
             // Check if details are entered
-            if (!formData.details) {
+            if (!newIncident.value.details) {
                 alert('Please enter incident details.');
                 return false;
             }
@@ -99,23 +144,23 @@ export default {
             }
 
             // Check if follow-up is required and HIA has failed
-            if (followUpRequired.value && formData.hia_result === 'fail') {
+            if (followUpRequired.value && newIncident.value.hia_result === 'fail') {
                 alert('Follow-up is required for failed HIA');
                 return;
             }
 
-            // Get the current user's ID
-            const userId = auth.currentUser.uid;
+            // Get the selected athlete's ID
+            const athleteId = selectedAthlete.value.id;
 
             // Create a new incident object
             const incident = {
-                userId,
-                date: formData.date,
-                time: formData.time,
-                symptoms: formData.symptoms,
-                hia_result: formData.hia_result,
-                follow_up_date: followUpRequired.value ? formData.follow_up_date : null,
-                details: formData.details
+                athleteId,
+                date: newIncident.value.date,
+                time: newIncident.value.time,
+                symptoms: newIncident.value.symptoms,
+                hia_result: newIncident.value.hia_result,
+                follow_up_date: followUpRequired.value ? newIncident.value.follow_up_date : null,
+                details: newIncident.value.details
             };
 
             // Add the new incident to Firestore
@@ -128,6 +173,7 @@ export default {
             }
         };
 
+        const formData = {};
         // Define a function to show or hide the follow-up date input
         const showFollowUpDate = () => {
             followUpRequired.value = formData.hia_result === 'fail';
@@ -143,4 +189,6 @@ export default {
     }
 };
 </script>
+  
+  
   

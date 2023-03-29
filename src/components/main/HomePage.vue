@@ -15,10 +15,10 @@
                     <a class="nav-link" href="#">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <router-link to="/about" class="nav-link">About</router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Resources</a>
+                    <router-link to="/resources" class="nav-link">Resources</router-link>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
@@ -134,7 +134,7 @@ export default {
         },
 
         displayName() {
-            return this.user && this.user.displayName ? this.user.displayName : '';
+            return this.user && this.user.name ? this.user.name : '';
         }
     },
 
