@@ -55,6 +55,8 @@
 import { addIncident } from '@/firebase/firestoreIncidents';
 import { db, auth } from '@/firebase/firebase';
 import { ref, computed } from 'vue';
+import { collection, getDoc, getDocs } from 'firebase/firestore';
+
 
 export default {
     setup() {
@@ -77,7 +79,7 @@ export default {
         // Get the list of athletes from Firestore
         const athletes = ref([]);
         const getAthletes = async () => {
-            const querySnapshot = await db.collection('athletes').get();
+            const querySnapshot = await getDocs(collection(db,"athletes"));
             athletes.value = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data()
