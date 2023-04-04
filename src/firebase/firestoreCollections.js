@@ -9,16 +9,9 @@ export const createUser = async (forename, surname, email, password, role) => {
       password
     );
     await setDoc(doc(db, "user", user.uid), {
-      forename: forename,
-      surname: surname,
-      address: "",
-      city: "",
-      phone_number: "",
-      postcode: "",
-      region: "",
+      fullName: { forename: forename, surname: surname },
       email: email,
       role: role,
-      createdAt: new Date(),
     });
 
     return user;

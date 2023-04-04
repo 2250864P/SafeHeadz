@@ -13,7 +13,7 @@
                 </router-link>
                 <!-- Conditionally render profile link and message when user is authenticated -->
                 <div v-if="isAuthenticated">
-                    <p>Hello {{ displayName }},</p>
+                    <p>Hello {{ fullName.forename }} {{ fullName.surname }}</p>
                     <router-link to="/dashboard" class="btn btn-primary btn-lg">
                         Go to Dashboard
                     </router-link>
@@ -24,12 +24,11 @@
 </template>
   
 <script>
+import { getDoc, doc } from "firebase/firestore";
 import PageBackground from "@/components/PageBackground.vue";
 import Header from "@/components/Header.vue";
 import { ref, onMounted } from "vue";
-import { auth } from "@/firebase/firebase";
-
-
+import { auth, db } from "@/firebase/firebase";
 
 export default {
     name: "HomePage",
@@ -39,32 +38,34 @@ export default {
     },
     setup() {
         const user = ref(null);
+        const fullName = ref({});
 
         const logout = async () => {
             await auth.signOut();
         };
 
-        onMounted(() => {
-            auth.onAuthStateChanged((firebaseUser) => {
+        onMounted(async () => {
+            auth.onAuthStateChanged(async (firebaseUser) => {
                 user.value = firebaseUser;
+                if (firebaseUser) {
+                    const userDoc = await getDoc(doc(db, "user", firebaseUser.uid));
+                    fullName.value = userDoc.data().fullName;
+                }
             });
         });
 
-        return { user, logout };
+        return { user, logout, fullName };
     },
 
     computed: {
         isAuthenticated() {
             return !!this.user;
         },
-
-        displayName() {
-            return this.user && this.user.displayName ? this.user.displayName : "";
-        },
     },
-
 };
 </script>
+
+
 
 
 <style>
