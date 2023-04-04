@@ -1,10 +1,11 @@
 import { db } from "@/firebase/firebase";
 import { collection, doc, getDocs, addDoc, query, where } from "firebase/firestore";
+import { ref, computed } from "vue";
 
 export const getIncidents = async () => {
   const headinjury = [];
   try {
-    const querySnapshot = await getDocs(collection(db, "incidents"));
+    const querySnapshot = await getDocs(collection(db, "headinjury"));
     querySnapshot.forEach((doc) => {
       headinjury.push({ id: doc.id, ...doc.data() });
     });
@@ -49,3 +50,22 @@ export async function getHeadInjuriesByUser(userId) {
   }));
   return headInjuries;
 }
+
+export const getUsers = async () => {
+  const users = ref([]);
+
+  const q = query(collection(db, "user"), where("role", "==", "athlete"));
+  const querySnapshot = await getDocs(q);
+  users.value = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  return users;
+};
+
+export const athleteList = (users) => {
+  return computed(() => {
+    return users.value;
+  });
+};

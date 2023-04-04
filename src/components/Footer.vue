@@ -1,37 +1,40 @@
-<!-- Created separate foot compoent that can be imported into each page -->
+<!-- Footer.vue -->
 <template>
-    <footer class="mx-auto bg-green text-muted">
-        <div class="container-fluid">
-            <ul class="nav justify-content-center text-muted ">
-                <li class="nav-item active">
-                    <a class="nav-link text-muted" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted" href="#">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted" href="#">Resources</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-muted" href="#">Contact</a>
-                </li>
-            </ul>
+    <footer class="navbar-light bg-transparent py-3 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <ul class="list-unstyled d-flex mb-0">
+                        <li class="me-3">
+                            <router-link class="text-decoration-none" to="/">Home</router-link>
+                        </li>
+                        <li class="me-3">
+                            <router-link class="text-decoration-none" to="/about">About</router-link>
+                        </li>
+                        <li class="me-3">
+                            <router-link class="text-decoration-none" to="/resources">Resources</router-link>
+                        </li>
+                        <li>
+                            <a class="text-decoration-none" href="#contact">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col text-center">
+                    <p class="mb-0">
+                        &copy; {{ new Date().getFullYear() }} SafeHeads. All rights reserved.
+                    </p>
+                </div>
+            </div>
         </div>
     </footer>
 </template>
-
+  
 <script>
 export default {
-    name: 'Footer'
-}
+    name: 'Footer',
+};
 </script>
-
-<style>
-footer {
-    position: absolute;
-    bottom: 0;
-}
-</style>
-
-
+  
   

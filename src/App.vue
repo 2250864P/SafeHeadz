@@ -1,8 +1,11 @@
 <template>
-  <div id="app">
+  <div id="app" class="d-flex flex-column min-vh-100">
     <PageBackground>
-      <router-view></router-view>
+      <div class="flex-grow-1">
+        <router-view></router-view>
+      </div>
     </PageBackground>
+    <Footer />
   </div>
 </template>
 
@@ -12,24 +15,23 @@ body {
 }
 </style>
 
-
 <script>
 import PageBackground from '@/components/PageBackground.vue';
-//import Footer from '@/components/Footer.vue';
-// imported background and footer
+import Footer from '@/components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
     PageBackground,
-    //Footer,
+    Footer,
   },
 
   created() {
     // background color to the body element
     document.body.style.backgroundColor = '#7fa17f'
-  }
+  },
 };
 </script>
+
 
 

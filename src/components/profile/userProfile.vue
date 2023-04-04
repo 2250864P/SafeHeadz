@@ -1,6 +1,7 @@
 <template>
+    <Header></Header>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Profile</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -22,7 +23,7 @@
         </nav>
         <div class="form-group">
             <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" v-model="name" :disabled="!isEditing">
+            <input type="text" class="form-control" id="name" v-model="displayName" :disabled="!isEditing">
         </div>
         <div class="form-group">
             <label for="email">Email:</label>
@@ -41,12 +42,12 @@
             <textarea class="form-control" id="address" rows="3" v-model="address" :disabled="!isEditing"></textarea>
         </div>
         <div class="form-group">
-            <label for="clubs">Clubs:</label>
-            <input type="text" class="form-control" id="clubs" v-model="clubs" :disabled="!isEditing">
+            <label for="clubs">Region:</label>
+            <input type="text" class="form-control" id="region" v-model="region" :disabled="!isEditing">
         </div>
         <div class="form-group">
-            <label for="position">Playing position:</label>
-            <input type="text" class="form-control" id="position" v-model="position" :disabled="!isEditing">
+            <label for="position">Postcode:</label>
+            <input type="text" class="form-control" id="postcode" v-model="postcode" :disabled="!isEditing">
         </div>
         <button type="button" class="btn btn-primary" @click="startEditing" v-if="!isEditing">Edit Profile</button>
         <button type="button" class="btn btn-primary" @click="saveProfile" v-if="isEditing">Save Profile</button>
@@ -56,24 +57,21 @@
 <script>
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/firebase";
-
+import Header from "@/components/Header.vue";
 
 export default {
+    components: {
+        Header
+    },
     data() {
         return {
-            contact_information: {
-                address: "",
-                city: "",
-                phone_number: "",
-                postcode: "",
-                region: "",
-            },
-            email: email,
-            name: {
-                forename: forename,
-                surname: surname,
-            },
-            role: role,
+            displayName: "",
+            email: "",
+            dob: "",
+            contact: "",
+            address: "",
+            region: "",
+            postcode: "",
             isEditing: false,
         };
     },
@@ -83,17 +81,21 @@ export default {
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const {
-                    name,
+                    displayName,
                     email,
                     dob,
                     contact,
                     address,
+                    region,
+                    postcode,
                 } = docSnap.data();
                 this.displayName = displayName;
                 this.email = email;
                 this.dob = dob;
                 this.contact = contact;
                 this.address = address;
+                this.region = region;
+                this.postcode = postcode;
             }
         } catch (error) {
             console.error(error);
@@ -105,7 +107,7 @@ export default {
         },
         async saveProfile() {
             try {
-                const docRef = doc(db, "user", auth.currentUser.uid);
+                const docRef = doc(db, "users", auth.currentUser.uid);
                 await updateDoc(docRef, {
                     displayName: this.displayName
                 });

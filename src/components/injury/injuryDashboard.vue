@@ -1,6 +1,8 @@
 <template>
+    <Header></Header>
+
     <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Injury Dashboard</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -10,7 +12,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <router-link to="/add" class="nav-link btn btn-primary">
+                            <router-link to="/add" class="nav-link btn btn-outline-primary">
                                 Add Concussion Incident
                             </router-link>
                         </li>
@@ -25,16 +27,17 @@
         </nav>
 
         <div class="container">
-            <h1>Dashboard</h1>
-            <hr>
-            <h2>My Incidents</h2>
+            <h1>My Incidents</h1>
             <table class="table">
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Time of Injury</th>
+                        <th>Symptoms</th>
+                        <th>HIA Result</th>
+                        <th>Next Assessment</th>
                         <th>Injury Details</th>
-                        <th>Recovery Progress</th>
-                        <th>Return to Play</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -55,9 +58,14 @@
 <script>
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/firebase";
+import Header from "@/components/Header.vue";
 
 
 export default {
+    components: {
+        Header
+    },
+
     data() {
         return {
             incidents: [],
