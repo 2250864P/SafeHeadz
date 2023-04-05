@@ -22,9 +22,14 @@
             </div>
         </nav>
         <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" class="form-control" id="name" v-model="displayName" :disabled="!isEditing">
+            <label for="forename">Forename:</label>
+            <input type="text" class="form-control" id="forename" v-model="fullName.forename" :disabled="!isEditing">
         </div>
+        <div class="form-group">
+            <label for="surname">Surname:</label>
+            <input type="text" class="form-control" id="surname" v-model="fullName.surname" :disabled="!isEditing">
+        </div>
+
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" class="form-control" id="email" v-model="email" disabled>
@@ -35,14 +40,22 @@
         </div>
         <div class="form-group">
             <label for="contact">Contact telephone number:</label>
-            <input type="tel" class="form-control" id="contact" v-model="contact" :disabled="!isEditing">
+            <input type="tel" class="form-control" id="contact" v-model="phoneNumber" :disabled="!isEditing">
         </div>
         <div class="form-group">
-            <label for="address">Address:</label>
-            <textarea class="form-control" id="address" rows="3" v-model="address" :disabled="!isEditing"></textarea>
+            <label for="address1">Address Line 1:</label>
+            <input type="text" class="form-control" id="address1" v-model="address1" :disabled="!isEditing">
         </div>
         <div class="form-group">
-            <label for="clubs">Region:</label>
+            <label for="address2">Address Line 2:</label>
+            <input type="text" class="form-control" id="address2" v-model="address2" :disabled="!isEditing">
+        </div>
+        <div class="form-group">
+            <label for="city">City:</label>
+            <input type="text" class="form-control" id="city" v-model="city" :disabled="!isEditing">
+        </div>
+        <div class="form-group">
+            <label for="region">Region:</label>
             <input type="text" class="form-control" id="region" v-model="region" :disabled="!isEditing">
         </div>
         <div class="form-group">
@@ -58,6 +71,7 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/firebase";
 import Header from "@/components/Header.vue";
+import { createUserAddress } from "@/firebase/firestoreCollections";
 
 export default {
     components: {
@@ -65,52 +79,76 @@ export default {
     },
     data() {
         return {
-            displayName: "",
+            fullName: {
+                forename: '',
+                surname: '',
+            },
             email: "",
             dob: "",
-            contact: "",
-            address: "",
+            address1: "",
+            address2: "",
+            city: "",
             region: "",
             postcode: "",
+            phoneNumber: "",
             isEditing: false,
         };
     },
+
+
     async created() {
         try {
             const docRef = doc(db, "user", auth.currentUser.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const {
-                    displayName,
+                    fullName,
                     email,
                     dob,
-                    contact,
-                    address,
+                    address1,
+                    address2,
+                    city,
                     region,
                     postcode,
+                    phoneNumber,
                 } = docSnap.data();
-                this.displayName = displayName;
+                this.fullName = fullName;
                 this.email = email;
                 this.dob = dob;
-                this.contact = contact;
-                this.address = address;
+                this.address1 = address1;
+                this.address2 = address2;
+                this.city = city;
                 this.region = region;
                 this.postcode = postcode;
+                this.phoneNumber = phoneNumber;
             }
         } catch (error) {
             console.error(error);
         }
     },
+
     methods: {
         startEditing() {
             this.isEditing = true;
         },
         async saveProfile() {
             try {
-                const docRef = doc(db, "users", auth.currentUser.uid);
+                const docRef = doc(db, "user", auth.currentUser.uid);
                 await updateDoc(docRef, {
-                    displayName: this.displayName
+                    fullName: this.fullName,
+                    dob: this.dob,
                 });
+                await createUserAddress(
+                    auth.currentUser.uid,
+                    this.address1,
+                    this.address2,
+                    this.city,
+                    this.region,
+                    this.postcode,
+                    this.phoneNumber,
+
+                );
+
                 this.isEditing = false; // set isEditing back to false
             } catch (error) {
                 console.error(error)

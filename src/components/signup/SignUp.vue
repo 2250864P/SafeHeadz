@@ -34,7 +34,7 @@
   
 <script>
 import { ref } from "vue";
-import { createUser } from "@/firebase/firestoreCollections.js";
+import { createUser, createAccount } from "@/firebase/firestoreCollections.js";
 import { sendEmailVerification } from "firebase/auth";
 
 export default {
@@ -67,6 +67,10 @@ export default {
             if (user !== null) {
                 try {
                     await sendEmailVerification(user);
+
+                    // Call createAccount function to save user data in the appropriate collection
+                    const accountId = await createAccount(user.uid, accountType.value, forename.value, surname.value);
+
                     console.log("Verification email sent to:", user.email);
                     // handle successful sign-up here, show success message and redirect to home page
                     alert(
@@ -96,4 +100,5 @@ export default {
     },
 };
 </script>
+
 
