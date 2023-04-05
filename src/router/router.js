@@ -5,8 +5,8 @@ import EducationalResources from "@/components/main/EducationalResources.vue";
 import SignUp from "@/components/signup/SignUp.vue";
 import AccountTypeSelector from "@/components/signup/AccountTypeSelector.vue";
 import userLogin from "@/components/login/userLogin.vue";
-import userProfile from "@/components/profile/userProfile.vue"
-import injuryDashboard from "@/components/injury/injuryDashboard"
+import userProfile from "@/components/profile/userProfile.vue";
+import injuryDashboard from "@/components/injury/injuryDashboard";
 import incidentEditor from "@/components/injury/incidentEditor";
 import { auth } from "@/firebase/firebase.js";
 
@@ -64,6 +64,7 @@ const routes = [
     component: incidentEditor,
     meta: {
       requiresAuth: true,
+      requiresMedicalStaff: true, 
     },
   },
 ];
@@ -76,11 +77,20 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const currentUser = auth.currentUser;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const requiresMedicalStaff = to.matched.some(
+    (record) => record.meta.requiresMedicalStaff
+  );
 
   if (requiresAuth && !currentUser) {
-    next("/login"); // Redirect to login page if user is not authenticated and accessing a route that requires authentication
+    next("/login");
+  } else if (
+    requiresMedicalStaff &&
+    currentUser &&
+    currentUser.accountType !== "medical-staff"
+  ) {
+    alert("You do not have permission to access this feature.");
   } else {
-    next(); // Proceed to the requested route
+    next();
   }
 });
 

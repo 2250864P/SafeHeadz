@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { doc, setDoc, addDoc, collection, getDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase/firebase";
 export const createUser = async (forename, surname, email, password, role) => {
   try {
@@ -52,23 +52,26 @@ export const createAccount = async (userId, accountType, forename, surname) => {
   }
 };
 
-export const createUserAddress = async (userId, address1, address2, city, region, postcode, phoneNumber) => {
-  try {
-    const docRef = await addDoc(collection(db, 'addresses'), {
-      userId,
-      address1,
-      address2,
-      city,
-      region,
-      postcode,
-      phoneNumber
-    });
-    console.log('User address added with ID: ', docRef.id);
-    return docRef.id;
-  } catch (error) {
-    console.error('Error adding user address: ', error);
-    return null;
-  }
+export const createUserAddress = async (
+  userId,
+  address1,
+  address2,
+  city,
+  region,
+  postcode,
+  phoneNumber
+) => {
+  const addressRef = doc(db, "addresses", userId);
+  const addressData = {
+    address1,
+    address2,
+    city,
+    region,
+    postcode,
+    phoneNumber,
+  };
+  await setDoc(addressRef, addressData);
+  console.log("User address added with ID: ", addressRef.id);
 };
 
 

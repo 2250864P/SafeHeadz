@@ -80,8 +80,8 @@ export default {
     data() {
         return {
             fullName: {
-                forename: '',
-                surname: '',
+                forename: "",
+                surname: ""
             },
             email: "",
             dob: "",
@@ -91,30 +91,32 @@ export default {
             region: "",
             postcode: "",
             phoneNumber: "",
-            isEditing: false,
+            isEditing: false
         };
     },
 
-
     async created() {
         try {
-            const docRef = doc(db, "user", auth.currentUser.uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
+            const userDocRef = doc(db, "user", auth.currentUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const { fullName, email, dob } = userDocSnap.data();
+                this.fullName = fullName;
+                this.email = email;
+                this.dob = dob;
+            }
+
+            const addressDocRef = doc(db, "addresses", auth.currentUser.uid);
+            const addressDocSnap = await getDoc(addressDocRef);
+            if (addressDocSnap.exists()) {
                 const {
-                    fullName,
-                    email,
-                    dob,
                     address1,
                     address2,
                     city,
                     region,
                     postcode,
-                    phoneNumber,
-                } = docSnap.data();
-                this.fullName = fullName;
-                this.email = email;
-                this.dob = dob;
+                    phoneNumber
+                } = addressDocSnap.data();
                 this.address1 = address1;
                 this.address2 = address2;
                 this.city = city;
@@ -136,7 +138,7 @@ export default {
                 const docRef = doc(db, "user", auth.currentUser.uid);
                 await updateDoc(docRef, {
                     fullName: this.fullName,
-                    dob: this.dob,
+                    dob: this.dob
                 });
                 await createUserAddress(
                     auth.currentUser.uid,
@@ -145,16 +147,14 @@ export default {
                     this.city,
                     this.region,
                     this.postcode,
-                    this.phoneNumber,
-
+                    this.phoneNumber
                 );
 
-                this.isEditing = false; // set isEditing back to false
+                this.isEditing = false;
             } catch (error) {
-                console.error(error)
+                console.error(error);
             }
         }
-
     }
-}
-</script>  
+};
+</script>
