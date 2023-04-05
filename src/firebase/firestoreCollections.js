@@ -74,4 +74,16 @@ export const createUserAddress = async (
   console.log("User address added with ID: ", addressRef.id);
 };
 
-
+export const getAccountType = async (uid) => {
+  try {
+    const userDoc = await getDoc(doc(db, "user", uid));
+    if (userDoc.exists()) {
+      return userDoc.data().role;
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    console.error("Error getting account type:", error);
+    return null;
+  }
+};

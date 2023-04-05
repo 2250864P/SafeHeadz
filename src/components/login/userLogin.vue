@@ -29,11 +29,12 @@
         </div>
     </div>
 </template>
-
-
+  
+  
 <script>
 import { ref } from 'vue';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getAccountType } from "@/firebase/firestoreCollections.js";
 import { useRouter } from 'vue-router';
 import { auth } from "@/firebase/firebase";
 
@@ -47,7 +48,10 @@ export default {
         const login = async () => {
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value)
-                // Redirect to the homepage or the user's profile page upon successful login
+                const user = userCredential.user;
+                const role = await getAccountType(user.uid);
+                localStorage.setItem("role", role);
+                // Redirect to the homepage
                 router.push('/')
             } catch (error) {
                 errorMessage.value = error.message
@@ -64,3 +68,4 @@ export default {
 
 }
 </script>
+  

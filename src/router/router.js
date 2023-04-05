@@ -8,6 +8,7 @@ import userLogin from "@/components/login/userLogin.vue";
 import userProfile from "@/components/profile/userProfile.vue";
 import injuryDashboard from "@/components/injury/injuryDashboard";
 import incidentEditor from "@/components/injury/incidentEditor";
+import { getAccountType } from "@/firebase/firestoreCollections.js";
 import { auth } from "@/firebase/firebase.js";
 
 const routes = [
@@ -64,7 +65,7 @@ const routes = [
     component: incidentEditor,
     meta: {
       requiresAuth: true,
-      requiresMedicalStaff: true, 
+      requiresMedicalStaff: true,
     },
   },
 ];
@@ -74,7 +75,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const currentUser = auth.currentUser;
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const requiresMedicalStaff = to.matched.some(
@@ -83,15 +84,16 @@ router.beforeEach((to, from, next) => {
 
   if (requiresAuth && !currentUser) {
     next("/login");
-  } else if (
-    requiresMedicalStaff &&
-    currentUser &&
-    currentUser.accountType !== "medical-staff"
-  ) {
-    alert("You do not have permission to access this feature.");
+  } else if (requiresMedicalStaff) {
+    const accountType = await getAccountType(currentUser.uid);
+    if (accountType !== "medical-staff") {
+      alert("You do not have permission to access this feature.");
+      next("/");
+    } else {
+      next();
+    }
   } else {
     next();
   }
 });
-
 export default router;
