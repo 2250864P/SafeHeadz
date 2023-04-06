@@ -43,3 +43,47 @@ export async function getMedicalStaffIdByUserId(userid) {
 
   return medicalStaffId;
 }
+
+export async function getAthleteIdByUserId(userid) {
+  const athleteCollection = collection(db, "athletes");
+  const q = query(athleteCollection, where("userid", "==", userid));
+  const querySnapshot = await getDocs(q);
+
+  let athleteId = "";
+  querySnapshot.forEach((doc) => {
+    athleteId = doc.id;
+  });
+
+  return athleteId;
+}
+
+export async function getHeadInjuriesByMedicalStaff(medicalStaffId) {
+  const headInjuryCollection = collection(db, "headinjury");
+  const q = query(
+    headInjuryCollection,
+    where("medicalStaffId", "==", medicalStaffId)
+  );
+  const querySnapshot = await getDocs(q);
+
+  let incidents = [];
+  querySnapshot.forEach((doc) => {
+    incidents.push({ id: doc.id, ...doc.data() });
+  });
+
+  return incidents;
+}
+
+export async function getHeadInjuriesByAthlete(athleteId) {
+  const headInjuryCollection = collection(db, "headinjury");
+  const q = query(headInjuryCollection, where("athleteId", "==", athleteId));
+  const querySnapshot = await getDocs(q);
+
+  let incidents = [];
+  querySnapshot.forEach((doc) => {
+    incidents.push({ id: doc.id, ...doc.data() });
+  });
+
+  return incidents;
+}
+
+

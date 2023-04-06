@@ -34,9 +34,9 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link btn btn-outline-primary" @click="logout">
+                        <router-link to="/" class="nav-link btn btn-outline-primary mr-2" @click="logout">
                             Logout
-                        </button>
+                        </router-link>
                     </li>
                 </ul>
             </div>

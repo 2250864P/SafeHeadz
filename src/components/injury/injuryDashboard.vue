@@ -28,35 +28,42 @@
 
         <div class="container">
             <h1>My Incidents</h1>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Time of Injury</th>
-                        <th>Symptoms</th>
-                        <th>HIA Result</th>
-                        <th>Next Assessment</th>
-                        <th>Injury Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="incident in incidents" :key="incident.id">
-                        <td>{{ formatDate(incident.date) }}</td>
-                        <td>{{ formatTime(incident.time) }}</td>
-                        <td>{{ incident.symptoms }}</td>
-                        <td>{{ incident.hia_result }}</td>
-                        <td>{{ formatDate(incident.follow_up_date) }}</td>
-                        <td>{{ incident.details }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="overflow-auto" style="max-height: 200px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time of Injury</th>
+                            <th>Symptoms</th>
+                            <th>HIA Result</th>
+                            <th>Next Assessment</th>
+                            <th>Injury Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="incident in incidents" :key="incident.id">
+                            <td>{{ formatDate(incident.date) }}</td>
+                            <td>{{ formatTime(incident.time) }}</td>
+                            <td>{{ incident.symptoms }}</td>
+                            <td>{{ incident.hia_result }}</td>
+                            <td>{{ formatDate(incident.follow_up_date) }}</td>
+                            <td>{{ incident.details }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "@/firebase/firebase";
+import {
+    getAthleteIdByUserId,
+    getMedicalStaffIdByUserId,
+    getHeadInjuriesByAthlete,
+    getHeadInjuriesByMedicalStaff,
+} from "@/firebase/firestoreInjuries";
+import { auth } from "@/firebase/firebase";
 import Header from "@/components/Header.vue";
 
 
@@ -74,37 +81,39 @@ export default {
         const user = auth.currentUser;
 
         if (user) {
-            // Get the incidents for the current user
-            const userDocRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userDocRef);
+            // Check if the user is a medical staff or an athlete
+            const medicalStaffId = await getMedicalStaffIdByUserId(user.uid);
 
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                this.incidents = userData.incidents || [];
-
-                // Get all head injuries from the "headinjury" collection for the current user
-                const userHeadInjuries = await getHeadInjuriesByUser(selectedAthlete.value);
-
-                // Add the user's head injuries to the incidents array
-                this.incidents.push(...userHeadInjuries);
+            if (medicalStaffId) {
+                // If the user is a medical staff, fetch incidents by medicalStaffId
+                this.incidents = await getHeadInjuriesByMedicalStaff(medicalStaffId);
+            } else {
+                // If the user is an athlete, fetch incidents by athleteId
+                const athleteId = await getAthleteIdByUserId(user.uid);
+                this.incidents = await getHeadInjuriesByAthlete(athleteId);
             }
         }
     },
 
     methods: {
-        formatDate(date) {
+        formatDate(dateString) {
+            const date = new Date(dateString);
+
             // Format date as 'dd-mm-yyyy'
-            const formattedDate = new Date(date.seconds * 1000).toLocaleDateString(
-                "en-GB"
-            );
+            const formattedDate = date.toLocaleDateString("en-GB");
             return formattedDate;
         },
-        formatTime(time) {
+        formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const time = new Date(0, 0, 0, hours, minutes);
+
             // Format time as 'HH:MM'
-            const formattedTime = new Date(time.seconds * 1000).toLocaleTimeString(
-                "en-US",
-                { hour12: false, hour: "numeric", minute: "numeric" }
-            );
+            const formattedTime = new Intl.DateTimeFormat('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).format(time);
+
             return formattedTime;
         },
     },
