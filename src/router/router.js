@@ -3,6 +3,7 @@ import HomePage from "@/components/main/HomePage.vue";
 import AboutPage from "@/components/main/AboutPage.vue";
 import EducationalResources from "@/components/main/EducationalResources.vue";
 import SignUp from "@/components/signup/SignUp.vue";
+import verifyPage from "@/components/signup/verifyPage.vue";
 import AccountTypeSelector from "@/components/signup/AccountTypeSelector.vue";
 import userLogin from "@/components/login/userLogin.vue";
 import userProfile from "@/components/profile/userProfile.vue";
@@ -37,6 +38,11 @@ const routes = [
     name: "SignUp",
     component: SignUp,
     props: (route) => ({ account: route.query.accountType }),
+  },
+  {
+    path: "/verification-pending",
+    name: "VerificationPending",
+    component: verifyPage,
   },
   {
     path: "/login",

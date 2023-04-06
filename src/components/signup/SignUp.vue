@@ -36,7 +36,6 @@
 import { ref } from "vue";
 import { createUser, createAccount } from "@/firebase/firestoreCollections.js";
 import { sendEmailVerification } from "firebase/auth";
-
 export default {
     props: {
         account: {
@@ -56,14 +55,12 @@ export default {
         const accountType = ref(props.account);
         const password = ref("");
         const confirmPassword = ref("");
-
         const handleSignUp = async () => {
             if (password.value !== confirmPassword.value) {
                 console.log("Passwords do not match");
                 return;
             }
             const user = await createUser(forename.value, surname.value, email.value, password.value, accountType.value);
-
             if (user !== null) {
                 try {
                     await sendEmailVerification(user);
@@ -72,11 +69,11 @@ export default {
                     const accountId = await createAccount(user.uid, accountType.value, forename.value, surname.value);
 
                     console.log("Verification email sent to:", user.email);
-                    // handle successful sign-up here, show success message and redirect to home page
+                    // Show success message and redirect to verification pending page
                     alert(
-                        "Verification email sent! Please verify your email address to complete registration."
+                        "Verification email sent! Please check your email and follow the instructions to complete registration."
                     );
-                    location.href = "/";
+                    location.href = "/verification-pending"; // Redirect to the verification pending page
                 } catch (error) {
                     console.error(error);
                     // handle failed email verification here, show error message
@@ -87,7 +84,6 @@ export default {
                 alert("Sign-up failed. Please try again later.");
             }
         };
-
         return {
             email,
             password,
@@ -100,5 +96,4 @@ export default {
     },
 };
 </script>
-
 
