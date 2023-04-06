@@ -30,3 +30,16 @@ export async function getAthletes() {
   });
   return athleteArray;
 }
+
+export async function getMedicalStaffIdByUserId(userid) {
+  const medicalStaffCollection = collection(db, "medicalstaff");
+  const q = query(medicalStaffCollection, where("userid", "==", userid));
+  const querySnapshot = await getDocs(q);
+
+  let medicalStaffId = "";
+  querySnapshot.forEach((doc) => {
+    medicalStaffId = doc.id;
+  });
+
+  return medicalStaffId;
+}

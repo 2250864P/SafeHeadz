@@ -56,10 +56,11 @@
 
   
 <script>
-import { addHeadInjury, getAthletes } from "@/firebase/firestoreInjuries";
+import { addHeadInjury, getAthletes, getMedicalStaffIdByUserId } from "@/firebase/firestoreInjuries";
 import { ref } from 'vue';
 import Header from "@/components/Header.vue";
 import { useRouter } from "vue-router";
+import { auth } from "@/firebase/firebase";
 
 export default {
     components: {
@@ -129,8 +130,13 @@ export default {
 
             // Get the selected athlete's ID
             console.log('Selected athlete:', selectedAthlete.value);
+            // Get the medical staff ID
+            // Get the medical staff user's document ID
+            const medicalStaffId = await getMedicalStaffIdByUserId(auth.currentUser.uid);
+
             // Create a new incident object
             const incident = {
+                medicalStaffId,
                 athleteId: selectedAthlete.value,
                 date: newIncident.value.date,
                 time: newIncident.value.time,
