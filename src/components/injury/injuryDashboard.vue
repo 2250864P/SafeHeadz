@@ -37,20 +37,19 @@
                         <th>HIA Result</th>
                         <th>Next Assessment</th>
                         <th>Injury Details</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="incident in incidents" :key="incident.id">
-                        <td>{{ formatDate(incident.injury_date) }}</td>
-                        <td>{{ incident.injury_details }}</td>
-                        <td>{{ incident.recovery_progress }}</td>
-                        <td>{{ incident.rtp ? 'Yes' : 'No' }}</td>
-
+                        <td>{{ formatDate(incident.date) }}</td>
+                        <td>{{ formatTime(incident.time) }}</td>
+                        <td>{{ incident.symptoms }}</td>
+                        <td>{{ incident.hia_result }}</td>
+                        <td>{{ formatDate(incident.follow_up_date) }}</td>
+                        <td>{{ incident.details }}</td>
                     </tr>
                 </tbody>
             </table>
-
         </div>
     </div>
 </template>
@@ -84,7 +83,7 @@ export default {
                 this.incidents = userData.incidents || [];
 
                 // Get all head injuries from the "headinjury" collection for the current user
-                const userHeadInjuries = await getHeadInjuriesByUser(user.uid);
+                const userHeadInjuries = await getHeadInjuriesByUser(selectedAthlete.value);
 
                 // Add the user's head injuries to the incidents array
                 this.incidents.push(...userHeadInjuries);

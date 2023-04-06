@@ -4,12 +4,13 @@
         <form @submit.prevent="addIncidentHandler">
             <div class="form-group">
                 <label for="athlete">Select Athlete:</label>
-                <select v-model="selectedAthlete">
-                    <option disabled value="">Please select an athlete</option>
-                    <option v-for="athlete in athleteList" :key="athlete.id" :value="athlete.id">
+                <select v-model="selectedAthlete" required>
+                    <option disabled value="null">Please select an athlete</option>
+                    <option v-for="athlete in athletes" :key="athlete.id" :value="athlete.id">
                         {{ athlete.name }}
                     </option>
                 </select>
+
             </div>
             <div class="form-group">
                 <label for="date">Date:</label>
@@ -55,10 +56,10 @@
 
   
 <script>
-import { addIncident, getUsers, athleteList } from '@/firebase/firestoreIncidents';
+import { addHeadInjury, getAthletes } from "@/firebase/firestoreInjuries";
 import { ref } from 'vue';
 import Header from "@/components/Header.vue";
-
+import { useRouter } from "vue-router";
 
 export default {
     components: {
@@ -74,14 +75,17 @@ export default {
             follow_up_date: '',
             details: ''
         });
-
-        const users = getUsers();
-        const selectedAthlete = ref("");
-
-        const athleteListComputed = athleteList(users);
+        const athletes = ref([]);
+        getAthletes().then((data) => (athletes.value = data));
+        const selectedAthlete = ref(null);
 
         // Define function to validate the form data
         const validateForm = () => {
+            // Check if an athlete is selected
+            if (selectedAthlete.value === null) {
+                alert('Please select an athlete.');
+                return false;
+            }
             // Check if date and time are selected
             if (!newIncident.value.date || !newIncident.value.time) {
                 alert('Please select a date and time.');
@@ -100,6 +104,12 @@ export default {
                 return false;
             }
 
+            // Check if follow-up date is required and not entered
+            if (newIncident.value.hia_result === 'fail' && !newIncident.value.follow_up_date) {
+                alert('Follow-up is required for failed HIA.  Please enter a follow-up date.');
+                return false;
+            }
+
             // Check if details are entered
             if (!newIncident.value.details) {
                 alert('Please enter incident details.');
@@ -108,6 +118,7 @@ export default {
 
             return true;
         };
+        const router = useRouter();
 
         // Define a function to add the new incident to Firestore
         const addIncidentHandler = async () => {
@@ -116,18 +127,11 @@ export default {
                 return;
             }
 
-            // Check if follow-up is required and HIA has failed
-            if (newIncident.value.hia_result === 'fail') {
-                alert('Follow-up is required for failed HIA');
-                return;
-            }
-
             // Get the selected athlete's ID
-            const athleteId = selectedAthlete.value.id;
-
+            console.log('Selected athlete:', selectedAthlete.value);
             // Create a new incident object
             const incident = {
-                athleteId,
+                athleteId: selectedAthlete.value,
                 date: newIncident.value.date,
                 time: newIncident.value.time,
                 symptoms: newIncident.value.symptoms,
@@ -138,8 +142,9 @@ export default {
 
             // Add the new incident to Firestore
             try {
-                await addIncident(incident);
+                await addHeadInjury(incident);
                 alert('Incident added successfully!');
+                router.push('/dashboard');
             } catch (error) {
                 console.error(error);
                 alert('Error adding incident');
@@ -148,12 +153,13 @@ export default {
 
         // Return the variables and functions for use in the template
         return {
-            "newIncident": newIncident,
+            newIncident: newIncident,
             validateForm,
             addIncidentHandler,
-            athleteList: athleteListComputed,
-
+            athletes,
+            selectedAthlete,
         };
+
     },
 }
 </script>
