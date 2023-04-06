@@ -28,33 +28,34 @@
 
         <div class="container">
             <h1>My Incidents</h1>
-            <div class="overflow-auto" style="max-height: 200px;">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Time of Injury</th>
-                            <th>Symptoms</th>
-                            <th>HIA Result</th>
-                            <th>Next Assessment</th>
-                            <th>Injury Details</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="incident in incidents" :key="incident.id">
-                            <td>{{ formatDate(incident.date) }}</td>
-                            <td>{{ formatTime(incident.time) }}</td>
-                            <td>{{ incident.symptoms }}</td>
-                            <td>{{ incident.hia_result }}</td>
-                            <td>{{ formatDate(incident.follow_up_date) }}</td>
-                            <td>{{ incident.details }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Athlete Name</th>
+                        <th>Date</th>
+                        <th>Time of Injury</th>
+                        <th>Symptoms</th>
+                        <th>HIA Result</th>
+                        <th>Next Assessment</th>
+                        <th>Injury Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="incident in incidents" :key="incident.id">
+                        <td>{{ incident.athleteName }}</td>
+                        <td>{{ formatDate(incident.date) }}</td>
+                        <td>{{ formatTime(incident.time) }}</td>
+                        <td>{{ incident.symptoms }}</td>
+                        <td>{{ incident.hia_result }}</td>
+                        <td>{{ formatDate(incident.follow_up_date) }}</td>
+                        <td>{{ incident.details }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
+  
 
 <script>
 import {
