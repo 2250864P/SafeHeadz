@@ -11,7 +11,6 @@
                         <select id="accountType" class="form-control" v-model="selectedAccountType">
                             <option value="" disabled>Select...</option>
                             <option value="athlete">Athlete</option>
-                            <option value="team-staff">Team Staff</option>
                             <option value="medical-staff">Medical Staff</option>
                         </select>
                     </div>

@@ -24,6 +24,18 @@
             <li>Memory loss or amnesia</li>
             <li>Mood changes, such as irritability or depression</li>
         </ul>
+        <h2>EMERGENCY INFORMATION</h2>
+        <p>
+            It is important to take concussions seriously, as they can have serious and potentially life-threatening
+            consequences if not treated promptly and appropriately. If you or someone you know experiences symptoms of a
+            concussion, seek medical attention immediately. Delaying treatment can lead to long-term consequences and put
+            your health at risk.
+        <h3>Contact:</h3>
+        <ul>
+            <li>999 in a life threatening scenario</li>
+            <li>If you need medical help fast, but it's not an emergency, use NHS 111 Online first or call 111</li>
+        </ul>
+        </p>
     </div>
 </template>
   
